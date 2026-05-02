@@ -1,0 +1,60 @@
+### TEST GET/WEBSITE
+GET http://localhost:5000
+
+### REGISTER
+POST http://localhost:5000/auth/register
+Content-Type: application/json
+
+{
+    "email": "test@gmail.com", "password": "sifra123", "role": "admin"
+}
+
+### LOGIN
+POST http://localhost:5000/auth/login
+Content-Type: application/json
+
+{
+    "email": "test@gmail.com", "password": "sifra123", "rememberMe": true
+}
+
+### GET /perfumes
+GET http://localhost:5000/perfumes
+Authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiaWF0IjoxNzc3MjI1OTQ5LCJleHAiOjE3Nzk4MTc5NDl9.CDKDjbA64Ns8ZHHVAQkmHYg2uryD8lOKxRYdPMYHZpE
+
+### GET /perfumes/:id
+GET http://localhost:5000/perfumes/1
+Authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiaWF0IjoxNzc3MjI1OTQ5LCJleHAiOjE3Nzk4MTc5NDl9.CDKDjbA64Ns8ZHHVAQkmHYg2uryD8lOKxRYdPMYHZpE
+
+### POST /PERFUMES
+POST http://localhost:5000/perfumes
+Authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiaWF0IjoxNzc3MjI1OTQ5LCJleHAiOjE3Nzk4MTc5NDl9.CDKDjbA64Ns8ZHHVAQkmHYg2uryD8lOKxRYdPMYHZpE
+Content-Type: application/json
+
+# {
+#     "brand": "Prada",
+#     "name": "Paradoxe",
+#     "description": "drugi najbolji parfem",
+#     "image_url": "https://jasmin.b-cdn.net/media/catalog/product/cache/4456161891bc26600241f10587ca424f/3/6/3614273760713-419b4393-2ede-4cbb-8dfa-78a1f0f818ce_1.jpg"
+# }
+
+{
+    "brand": "Carolina Herrera",
+    "name": "Good Girl Blush",
+    "description": "Najlepsi parfem ikad",
+    "image_url": "https://jasmin.b-cdn.net/media/catalog/product/cache/4456161891bc26600241f10587ca424f/8/4/8411061056776_9.jpg"
+}
+
+###GET /PERFUMES/BRAND
+GET http://localhost:5000/perfumes/brands
+Authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiaWF0IjoxNzc3MDIwNjc3LCJleHAiOjE3Nzk2MTI2Nzd9.uRAWZj0Z0rsf6GNVW_CeeYansKvrHtGWrgV7yqVCcb8
+Content-Type: application/json
+
+### GET /PERFUMES/REVIEWS
+GET http://localhost:5000/perfumes/reviews/2
+Authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiaWF0IjoxNzc3MDIwNjc3LCJleHAiOjE3Nzk2MTI2Nzd9.uRAWZj0Z0rsf6GNVW_CeeYansKvrHtGWrgV7yqVCcb8
+Content-Type: application/json
+
+###GET /PERFUMES/REVIEWS where perfume_id and user_id
+GET http://localhost:5000/perfumes/reviews/2/id
+Authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiaWF0IjoxNzc0ODc0OTU0LCJleHAiOjE3NzQ5NjEzNTR9.-9W-AfjOYT-GvFj7iLeAe7xpVCLzxQ2HI0TZ7C83mVU
+Content-Type: application/json
