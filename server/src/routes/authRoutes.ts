@@ -83,14 +83,7 @@ router.post("/login", async (req, res) => {
 
     const token = jwt.sign({ id: user.id }, secret, { expiresIn });
 
-    res.cookie("token", token, {
-      httpOnly: true,
-      secure: true,
-      sameSite: "none",
-      maxAge: rememberMe ? 30 * 24 * 60 * 60 * 1000 : 2 * 60 * 60 * 1000,
-    });
-
-    res.json({ message: "Logged in successfully", role: user.role });
+    res.json({ message: "Logged in successfully", role: user.role, token });
   } catch (err: any) {
     console.log(err.message);
     res.sendStatus(503);
@@ -99,17 +92,13 @@ router.post("/login", async (req, res) => {
 
 //LOGOUT
 router.post("/logout", async (req, res) => {
-  res.clearCookie("token", {
-    httpOnly: true,
-    secure: true,
-    sameSite: "none",
-  });
   res.json({ message: "Logged out successfully" });
 });
 
 //ME
 router.get("/me", async (req, res) => {
-  const token = req.cookies.token;
+  const authHeader = req.headers.authorization;
+  const token = authHeader && authHeader.split(" ")[1];
   const secret = process.env.JWT_SECRET;
   if (!secret) {
     throw new Error("JWT_SECRET is not set");

@@ -5,12 +5,10 @@ import dotenv from "dotenv";
 import authRoutes from "./routes/authRoutes";
 import perfumeRoutes from "./routes/perfumeRoutes";
 import authMiddleware from "./middleware/authMiddleware";
-import cookieParser from "cookie-parser";
 
 dotenv.config();
 
 const app = express();
-app.use(cookieParser());
 const PORT = process.env.PORT || 5000;
 
 app.use(
@@ -21,7 +19,7 @@ app.use(
       "https://do-da-fragrances.onrender.com",
       "https://doda-fragrances.onrender.com",
     ],
-    credentials: true,
+
     methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
   }),
 );

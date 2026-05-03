@@ -12,29 +12,29 @@ function App() {
 
   const handleLogout = async () => {
     try {
-      const response = await fetch(
-        `${import.meta.env.VITE_API_URL}/auth/logout`,
-        {
-          method: "POST",
-          credentials: "include",
-        },
-      );
-      if (response.ok) {
-        setIsLogedIn(false);
-      } else {
-        console.log("Logout failed on server");
-      }
+      const token = localStorage.getItem("token");
+      await fetch(`${import.meta.env.VITE_API_URL}/auth/logout`, {
+        method: "POST",
+        headers: token ? { Authorization: `Bearer ${token}` } : {},
+      });
     } catch (err) {
       console.log("Logout error", err);
     }
+    localStorage.removeItem("token");
+    setIsLogedIn(false);
   };
 
   useEffect(() => {
     const checkAuth = async () => {
+      const token = localStorage.getItem("token");
+      if (!token) {
+        setIsLogedIn(false);
+        return;
+      }
       try {
         const res = await fetch(`${import.meta.env.VITE_API_URL}/auth/me`, {
           method: "GET",
-          credentials: "include",
+          headers: { Authorization: `Bearer ${token}` },
         });
 
         if (res.ok) {
@@ -43,10 +43,12 @@ function App() {
           setIsLogedIn(true);
           setRole(data.role);
         } else {
+          localStorage.removeItem("token");
           setIsLogedIn(false);
         }
       } catch (err) {
         console.log("Auth check failed", err);
+        localStorage.removeItem("token");
         setIsLogedIn(false);
       }
     };

@@ -37,7 +37,6 @@ const Login: React.FC<ChildProps> = ({
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          credentials: "include",
           body: JSON.stringify({
             email,
             password,
@@ -54,6 +53,7 @@ const Login: React.FC<ChildProps> = ({
         throw new Error(`Server error: ${response.status}`);
       }
 
+      localStorage.setItem("token", data.token);
       setIsLogedIn(true);
       setRole(data.role);
     } catch (err) {
