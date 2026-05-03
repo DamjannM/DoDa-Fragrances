@@ -25,15 +25,12 @@ const AddPerfumeDialog = ({
       return alert("Please fill in all fields");
     }
     try {
-      // const token = getCookie("token");
-      // if (!token) {
-      //   throw new Error("User not authenticated");
-      // }
+      const token = localStorage.getItem("token");
       const response = await fetch(`${import.meta.env.VITE_API_URL}/perfumes`, {
         method: "POST",
-        credentials: "include",
         headers: {
           "Content-Type": "application/json",
+          ...(token && { Authorization: `Bearer ${token}` }),
         },
         body: JSON.stringify({ brand, name, description, image_url }),
       });

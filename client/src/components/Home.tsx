@@ -42,11 +42,12 @@ const Home = ({ onLogout, role }: HomeProps) => {
       params.append("limit", limit.toString());
       params.append("offset", offset.toString());
 
+      const token = localStorage.getItem("token");
       const response = await fetch(
         `${import.meta.env.VITE_API_URL}/perfumes?${params.toString()}`,
         {
           method: "GET",
-          credentials: "include",
+          headers: token ? { Authorization: `Bearer ${token}` } : {},
         },
       );
       const data = await response.json();

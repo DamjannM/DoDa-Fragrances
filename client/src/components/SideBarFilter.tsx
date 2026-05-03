@@ -20,12 +20,13 @@ const SideBarFilter = ({
   const [brands, setBrands] = useState<string[]>([]);
 
   const fetchBrands = async () => {
+    const token = localStorage.getItem("token");
     try {
       const response = await fetch(
         `${import.meta.env.VITE_API_URL}/perfumes/brands`,
         {
           method: "GET",
-          credentials: "include",
+          headers: token ? { Authorization: `Bearer ${token}` } : {},
         },
       );
       const data = await response.json();

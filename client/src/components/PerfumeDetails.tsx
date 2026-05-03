@@ -58,14 +58,15 @@ const PerfumeDetails = () => {
 
   async function handleSubmitRating() {
     try {
+      const token = localStorage.getItem("token");
       const response = await fetch(
         `${import.meta.env.VITE_API_URL}/perfumes/reviews`,
         {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
+            ...(token && { Authorization: `Bearer ${token}` }),
           },
-          credentials: "include",
           body: JSON.stringify({
             perfume_id: perfume?.id,
             scent: scent,
@@ -89,12 +90,13 @@ const PerfumeDetails = () => {
   }
 
   async function fetchPerfumeDetails(id: number) {
+    const token = localStorage.getItem("token");
     try {
       const res = await fetch(
         `${import.meta.env.VITE_API_URL}/perfumes/${id}`,
         {
           method: "GET",
-          credentials: "include",
+          headers: token ? { Authorization: `Bearer ${token}` } : {},
         },
       );
       if (!res.ok) {
@@ -108,12 +110,13 @@ const PerfumeDetails = () => {
   }
 
   async function fetchReviews(perfume_id: number) {
+    const token = localStorage.getItem("token");
     try {
       const res = await fetch(
         `${import.meta.env.VITE_API_URL}/perfumes/reviews/${perfume_id}`,
         {
           method: "GET",
-          credentials: "include",
+          headers: token ? { Authorization: `Bearer ${token}` } : {},
         },
       );
       if (!res.ok) {
@@ -128,12 +131,13 @@ const PerfumeDetails = () => {
   }
 
   async function fetchUserReview(perfume_id: number) {
+    const token = localStorage.getItem("token");
     try {
       const res = await fetch(
         `${import.meta.env.VITE_API_URL}/perfumes/reviews/${perfume_id}/id`,
         {
           method: "GET",
-          credentials: "include",
+          headers: token ? { Authorization: `Bearer ${token}` } : {},
         },
       );
       if (!res.ok) {
