@@ -15,7 +15,11 @@ const PORT = process.env.PORT || 5000;
 
 app.use(
   cors({
-    origin: ["http://localhost:5173", "https://do-da-fragrances.vercel.app/"],
+    origin: [
+      "http://localhost:5173",
+      "https://do-da-fragrances.vercel.app/",
+      "https://do-da-fragrances.onrender.com/",
+    ],
     credentials: true,
   }),
 );
