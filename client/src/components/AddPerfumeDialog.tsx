@@ -29,7 +29,7 @@ const AddPerfumeDialog = ({
       // if (!token) {
       //   throw new Error("User not authenticated");
       // }
-      const response = await fetch("http://localhost:5000/perfumes", {
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/perfumes`, {
         method: "POST",
         credentials: "include",
         headers: {
