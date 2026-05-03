@@ -22,15 +22,6 @@ db.exec(`
     )
     `);
 
-// db.exec(`
-//     CREATE TABLE details (
-//     id INTEGER PRIMARY KEY AUTOINCREMENT,
-//     perfume_id INTEGER NOT NULL REFERENCES perfumes(id) ON DELETE CASCADE,
-//     description TEXT,
-//     FOREIGN KEY(perfume_id) REFERENCES perfumes(id)
-//     )
-//     `);
-
 db.exec(`
     CREATE TABLE reviews (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -45,4 +36,5 @@ db.exec(`
     UNIQUE(user_id, perfume_id)
     )
     `);
+    
 export default db;

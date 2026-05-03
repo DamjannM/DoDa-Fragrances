@@ -1,94 +1,139 @@
 import express from "express";
-import db from "../db";
+import prisma from "../prismaClient";
 
 const router = express.Router();
 
 // create an perfume
-router.post("/", (req, res) => {
+router.post("/", async (req, res) => {
   const { brand, name, description, image_url } = req.body;
-  const insertPerfume = db.prepare(
-    `INSERT INTO perfumes (user_id, brand, name, description, image_url) VALUES (?, ?, ?, ?, ?)`,
-  );
-  const result = insertPerfume.run(
-    req.userId!,
-    brand,
-    name,
-    description,
-    image_url,
-  );
+  const insertPerfume = await prisma.perfume.create({
+    data: {
+      user_id: req.userId!,
+      brand,
+      name,
+      description,
+      image_url,
+    },
+  });
 
-  res.json({ brand, name, description, image_url });
+  res.json(insertPerfume);
 });
 
 //fetch all perfumes with filter and search
-router.get("/", (req, res) => {
-  const { searchQuery = "", filter = "", limit = 20, offset = 0 } = req.query;
+router.get("/", async (req, res) => {
+  const { searchQuery, filter, limit, offset } = req.query;
 
-  let whereClause = "WHERE 1=1";
-  const params: any[] = [];
+  const brands =
+    typeof req.query.filter === "string"
+      ? req.query.filter.split(",").map((b) => b.trim())
+      : [];
 
-  // Add search filter
-  if (searchQuery) {
-    whereClause +=
-      " AND (p.name LIKE ? OR p.brand LIKE ? OR p.description LIKE ?)";
-    const searchTerm = `%${searchQuery}%`;
-    params.push(searchTerm, searchTerm, searchTerm);
-  }
+  const perfumes = await prisma.perfume.findMany({
+    where: {
+      AND: [
+        searchQuery
+          ? {
+              OR: [
+                { name: { contains: searchQuery, mode: "insensitive" } },
+                { brand: { contains: searchQuery, mode: "insensitive" } },
+              ],
+            }
+          : {},
+        filter
+          ? {
+              ...(brands.length > 0 && {
+                OR: brands.map((brand) => ({
+                  brand: {
+                    in: brands,
+                  },
+                })),
+              }),
+            }
+          : {},
+      ],
+    },
+    skip: Number(offset),
+    take: Number(limit),
+  });
 
-  // Add custom filter
-  if (filter) {
-    whereClause += ` AND ${filter}`;
-  }
+  const ratings = await prisma.review.groupBy({
+    by: ["perfume_id"],
+    _avg: {
+      total_rating: true,
+    },
+  });
 
-  const getPerfumes = db.prepare(
-    `SELECT p.*, IFNULL(AVG(r.total_rating), 0) AS total_rating
-     FROM perfumes p
-     LEFT JOIN reviews r ON p.id = r.perfume_id
-     ${whereClause}
-     GROUP BY p.id
-     LIMIT ? OFFSET ?`,
+  const ratingMap = new Map(
+    ratings.map((r: any) => [
+      r.perfume_id,
+      Math.round(r._avg.total_rating * 100) / 100,
+    ]),
   );
 
-  params.push(Number(limit), Number(offset));
-  const perfumes = getPerfumes.all(...params);
-  res.json(perfumes);
+  const result = perfumes.map((p: any) => ({
+    ...p,
+    total_rating: ratingMap.get(p.id) ?? 0,
+  }));
+  res.json(result);
 });
 
 // fetch all unique brands
-router.get("/brands", (req, res) => {
-  const getBrands = db.prepare(
-    `SELECT DISTINCT brand FROM perfumes ORDER BY brand`,
-  );
-  const brands = getBrands.all();
+router.get("/brands", async (req, res) => {
+  const brands = await prisma.perfume.findMany({
+    distinct: ["brand"],
+    orderBy: { brand: "asc" },
+    select: { brand: true },
+  });
   res.json(brands);
 });
 
-router.get("/:id", (req, res) => {
-  const getPerfume = db.prepare(
-    `SELECT p.*, IFNULL(AVG(r.total_rating), 0) AS total_rating
-     FROM perfumes p
-     LEFT JOIN reviews r ON p.id = r.perfume_id
-     WHERE p.id = ?
-     GROUP BY p.id`,
-  );
-  const perfume = getPerfume.get(req.params.id);
-  res.json(perfume);
+router.get("/:id", async (req, res) => {
+  const id = Number(req.params.id);
+
+  const perfume = await prisma.perfume.findUnique({
+    where: { id },
+    include: {
+      reviews: {
+        select: { total_rating: true },
+      },
+    },
+  });
+
+  if (!perfume) {
+    return res.status(404).json({ message: "Perfume not found" });
+  }
+
+  const averageRating =
+    perfume.reviews.length > 0
+      ? perfume.reviews.reduce(
+          (sum: number, r: any) => sum + (r.total_rating || 0),
+          0,
+        ) / perfume.reviews.length
+      : 0;
+
+  const result = {
+    ...perfume,
+    total_rating: averageRating,
+  };
+
+  res.json(result);
 });
 
 // create review
-router.post("/reviews", (req, res) => {
+router.post("/reviews", async (req, res) => {
   const { perfume_id, scent, projection, longevity, comment } = req.body;
-  const insertPerfume = db.prepare(
-    `INSERT INTO reviews (user_id, perfume_id, scent, projection, longevity, comment) VALUES (?, ?, ?, ?, ?, ?)`,
-  );
-  const result = insertPerfume.run(
-    req.userId!,
-    perfume_id,
-    scent,
-    projection,
-    longevity,
-    comment,
-  );
+  const result = await prisma.review.create({
+    data: {
+      user_id: req.userId!,
+      perfume_id,
+      scent,
+      projection,
+      longevity,
+      comment,
+      total_rating:
+        Math.round(((scent + projection + longevity) / 3) * 100) / 100,
+    },
+  });
 
   res.json({
     perfume_id,
@@ -96,23 +141,35 @@ router.post("/reviews", (req, res) => {
     projection,
     longevity,
     comment,
-    total_rating: result.lastInsertRowid,
+    total_rating: result.total_rating,
   });
 });
 
-router.get("/reviews/:perfume_id", (req, res) => {
-  const getReviews = db.prepare(
-    `SELECT r.*, u.email FROM reviews r JOIN users u ON r.user_id = u.id WHERE r.perfume_id = ?`,
-  );
-  const reviews = getReviews.all(req.params.perfume_id);
-  res.json(reviews);
+router.get("/reviews/:perfume_id", async (req, res) => {
+  const reviews = await prisma.review.findMany({
+    where: { perfume_id: Number(req.params.perfume_id) },
+    include: { user: { select: { email: true } } },
+  });
+  const result = reviews.map(({ user, ...rest }: any) => ({
+    ...rest,
+    email: user.email,
+  }));
+  res.json(result);
 });
 
-router.get("/reviews/:perfume_id/id", (req, res) => {
-  const getReview = db.prepare(
-    `SELECT r.*, u.email FROM reviews r JOIN users u ON r.user_id = u.id WHERE r.perfume_id = ? AND r.user_id = ?`,
-  );
-  const review = getReview.get(req.params.perfume_id, req.userId);
-  res.json(review);
+router.get("/reviews/:perfume_id/id", async (req, res) => {
+  const review = await prisma.review.findFirst({
+    where: {
+      perfume_id: Number(req.params.perfume_id),
+      user_id: req.userId!,
+    },
+    include: { user: { select: { email: true } } },
+  });
+  const result = {
+    ...review,
+    email: review.user.email,
+  };
+
+  res.json(result);
 });
 export default router;

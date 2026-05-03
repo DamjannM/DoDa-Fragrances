@@ -29,15 +29,15 @@ const Home = ({ onLogout, role }: HomeProps) => {
   const [offset, setOffset] = useState(0);
 
   const fetchPerfumes = async (
-    search = "",
-    filterQuery = "",
-    limit = 20,
-    offset = 0,
+    searchQuery: string,
+    filter: string,
+    limit: number,
+    offset: number,
   ) => {
     try {
       const params = new URLSearchParams();
-      if (search) params.append("searchQuery", search);
-      if (filterQuery) params.append("filter", filterQuery);
+      if (searchQuery) params.append("searchQuery", searchQuery);
+      if (filter) params.append("filter", filter);
       params.append("limit", limit.toString());
       params.append("offset", offset.toString());
 

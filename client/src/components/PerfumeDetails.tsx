@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { FaRegStar, FaStar, FaStarHalfAlt } from "react-icons/fa";
 import { IoMdArrowRoundBack } from "react-icons/io";
 import { useParams, useNavigate } from "react-router-dom";
 
@@ -153,6 +154,18 @@ const PerfumeDetails = () => {
     }
   }, [id]);
 
+  const renderStars = (rating: number) => {
+    return [...Array(5)].map((_, i) => {
+      if (rating >= i + 1) {
+        return <FaStar key={i} color="gold" />;
+      } else if (rating >= i + 0.5) {
+        return <FaStarHalfAlt key={i} color="gold" />;
+      } else {
+        return <FaRegStar key={i} color="gold" />;
+      }
+    });
+  };
+
   if (!perfume) {
     return (
       <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
@@ -188,12 +201,11 @@ const PerfumeDetails = () => {
             </div>
 
             {perfume.total_rating !== undefined && (
-              <div className="flex gap-1">
-                {[...Array(5)].map((_, i) => (
-                  <span key={i} className="text-yellow-500 text-xl">
-                    {perfume.total_rating! >= i + 1 ? "★" : "☆"}
-                  </span>
-                ))}
+              <div className="flex ">
+                <span className="flex items-center">
+                  {renderStars(perfume.total_rating)}
+                </span>
+
                 <span className="ml-2 text-gray-600">
                   ({Math.round(perfume.total_rating! * 10) / 10})
                 </span>
