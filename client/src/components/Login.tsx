@@ -51,12 +51,6 @@ const Login: React.FC<ChildProps> = ({
         throw new Error(`Server error: ${response.status}`);
       }
 
-      // if (data.token) {
-      //   token = data.token;
-      //   // sessionStorage.setItem("token", token);
-      // } else {
-      //   throw Error("❌ Failed to authenticate...");
-      // }
       setIsLogedIn(true);
       setRole(data.role);
     } catch (err) {
