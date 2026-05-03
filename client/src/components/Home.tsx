@@ -56,6 +56,11 @@ const Home = ({ onLogout, role }: HomeProps) => {
     }
   };
 
+  const handleLoadMore = () => {
+    setOffset((prevOffset) => prevOffset + limit);
+    setLimit((prevLimit) => prevLimit + 20);
+  };
+
   useEffect(() => {
     fetchPerfumes(searchQuery, filter, limit, offset);
   }, [searchQuery, filter, limit, offset]);
