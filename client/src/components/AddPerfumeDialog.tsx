@@ -3,7 +3,12 @@ import { IoMdArrowRoundBack } from "react-icons/io";
 
 interface AddPerfumeDialogProps {
   setShowAddPerfume: (value: boolean) => void;
-  fetchPerfumes: () => void;
+  fetchPerfumes: (
+    searchQuery: string,
+    filter: string,
+    limit: number,
+    offset: number,
+  ) => Promise<void>;
 }
 
 const AddPerfumeDialog = ({
@@ -37,7 +42,7 @@ const AddPerfumeDialog = ({
       }
       const data = await response.json();
       console.log("Perfume added:", data);
-      fetchPerfumes();
+      fetchPerfumes("", "", 20, 0);
       setShowAddPerfume(false);
     } catch (error) {
       console.error("Error adding perfume:", error);

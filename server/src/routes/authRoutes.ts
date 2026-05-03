@@ -1,8 +1,9 @@
 import express from "express";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
-import db from "../db";
+// import db from "../db";
 import dotenv from "dotenv";
+import prisma from "../prismaClient";
 
 dotenv.config();
 const router = express.Router();
@@ -18,24 +19,31 @@ router.post("/register", async (req, res) => {
   }
 
   try {
-    const insertUser = db.prepare(
-      `INSERT INTO users (email,password, role) VALUES (?, ?, ?)`,
-    );
-    const result = insertUser.run(email, hashedPassword, role);
+    // const insertUser = db.prepare(
+    //   `INSERT INTO users (email,password, role) VALUES (?, ?, ?)`,
+    // );
+    // const result = insertUser.run(email, hashedPassword, role);
+    const user = await prisma.user.create({
+      data: {
+        email,
+        password: hashedPassword,
+        role,
+      },
+    });
     const secret = process.env.JWT_SECRET;
 
     if (!secret) {
       throw new Error("JWT_SECRET is not set");
     }
 
-    const token = jwt.sign({ id: result.lastInsertRowid }, secret, {
+    const token = jwt.sign({ id: user.id }, secret, {
       expiresIn: "24h",
     });
 
     res.json({ token, role });
   } catch (error: any) {
     if (
-      error.code === "ERR_SQLITE_ERROR" &&
+      error.code === "P2002" &&
       error.message?.includes("UNIQUE constraint failed: users.email")
     ) {
       return res.status(400).send({ message: "User already exists" });
@@ -51,8 +59,11 @@ router.post("/login", async (req, res) => {
   const { email, password, rememberMe } = req.body;
 
   try {
-    const getUser = db.prepare("SELECT * FROM users WHERE email = ?");
-    const user = getUser.get(email);
+    // const getUser = db.prepare("SELECT * FROM users WHERE email = ?");
+    // const user = getUser.get(email);
+    const user = await prisma.user.findUnique({
+      where: { email },
+    });
 
     if (!user) {
       return res.status(404).send({ message: "User not found" });
@@ -87,13 +98,13 @@ router.post("/login", async (req, res) => {
 });
 
 //LOGOUT
-router.post("/logout", (req, res) => {
+router.post("/logout", async (req, res) => {
   res.clearCookie("token");
   res.json({ message: "Logged out successfully" });
 });
 
 //ME
-router.get("/me", (req, res) => {
+router.get("/me", async (req, res) => {
   const token = req.cookies.token;
   const secret = process.env.JWT_SECRET;
   if (!secret) {
@@ -106,11 +117,11 @@ router.get("/me", (req, res) => {
 
   try {
     const decoded = jwt.verify(token, secret) as { id: number };
+    const user = await prisma.user.findUnique({ where: { id: decoded.id } });
     return res.json({
       isAuthenticated: true,
       userId: decoded.id,
-      role: db.prepare("SELECT role FROM users WHERE id = ?").get(decoded.id)
-        ?.role,
+      role: user?.role,
     });
   } catch (err) {
     return res.status(401).json({ isAuthenticated: false });

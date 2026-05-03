@@ -21,14 +21,18 @@ function authMiddleware(req: Request, res: Response, next: NextFunction) {
     if (!secret) {
       throw new Error("JWT_SECRET is not set");
     }
-    jwt.verify(token, secret, (err, decoded) => {
-      if (err) {
-        return res.status(401).json({ message: "Invalid token" });
-      }
-      const { id } = decoded as { id: number };
-      req.userId = id;
-      next();
-    });
+    jwt.verify(
+      token,
+      secret,
+      (err: jwt.VerifyErrors | null, decoded: string | object | undefined) => {
+        if (err) {
+          return res.status(401).json({ message: "Invalid token" });
+        }
+        const { id } = decoded as { id: number };
+        req.userId = id;
+        next();
+      },
+    );
   } catch (err) {
     console.log("Authentication middleware error: ", err);
     return res.status(401).json({ message: "Invalid or expired token" });

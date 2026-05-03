@@ -6,7 +6,7 @@ POST http://localhost:5000/auth/register
 Content-Type: application/json
 
 {
-    "email": "test@gmail.com", "password": "sifra123", "role": "admin"
+    "email": "ts@gmail.com", "password": "sifra123", "role": "admin"
 }
 
 ### LOGIN
@@ -27,7 +27,7 @@ Authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiaWF0IjoxNzc3MjI1
 
 ### POST /PERFUMES
 POST http://localhost:5000/perfumes
-Authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiaWF0IjoxNzc3MjI1OTQ5LCJleHAiOjE3Nzk4MTc5NDl9.CDKDjbA64Ns8ZHHVAQkmHYg2uryD8lOKxRYdPMYHZpE
+Authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiaWF0IjoxNzc3NzQwMzI5LCJleHAiOjE3Nzc4MjY3Mjl9.5IypS6dRpLjzifyErUe_nHVJ8zRzCXOLhcC8olfMeh4
 Content-Type: application/json
 
 # {
@@ -39,8 +39,8 @@ Content-Type: application/json
 
 {
     "brand": "Carolina Herrera",
-    "name": "Good Girl Blush",
-    "description": "Najlepsi parfem ikad",
+    "name": "Good Girl",
+    "description": "redovan parfem",
     "image_url": "https://jasmin.b-cdn.net/media/catalog/product/cache/4456161891bc26600241f10587ca424f/8/4/8411061056776_9.jpg"
 }
 

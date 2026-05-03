@@ -1,0 +1,54 @@
+// This is your Prisma schema file.
+// Learn more at https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+
+model User {
+  id       Int       @id @default(autoincrement())
+  email    String    @unique
+  password String
+  role     String
+
+  perfumes Perfume[]
+  reviews  Review[]
+}
+
+model Perfume {
+  id          Int     @id @default(autoincrement())
+  user_id     Int
+  user        User    @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  brand       String?
+  name        String?
+  description String? @db.Text
+  image_url   String?
+
+  reviews     Review[]
+}
+
+model Review {
+  id          Int     @id @default(autoincrement())
+
+  perfume_id  Int     
+  perfume     Perfume @relation(fields: [perfume_id], references: [id], onDelete: Cascade)
+
+  user_id     Int     
+  user        User    @relation(fields: [user_id], references: [id], onDelete: Cascade)
+
+  scent       Int?
+  projection  Int?
+  longevity   Int?
+  total_rating Int?
+  comment     String? @db.Text
+
+  @@unique([user_id, perfume_id])
+  @@map("reviews")
+}

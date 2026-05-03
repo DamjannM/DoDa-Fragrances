@@ -47,8 +47,8 @@ const SideBarFilter = ({
 
   useEffect(() => {
     if (selectedBrands.length > 0) {
-      const brandList = selectedBrands.map((brand) => `'${brand}'`).join(", ");
-      setFilter(`brand IN (${brandList})`);
+      const brandList = selectedBrands.map((brand) => `${brand}`).join(", ");
+      setFilter(brandList);
     } else {
       setFilter("");
     }
