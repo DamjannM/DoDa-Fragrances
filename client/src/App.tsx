@@ -12,14 +12,18 @@ function App() {
 
   const handleLogout = async () => {
     try {
-      await fetch(`${import.meta.env.VITE_API_URL}/auth/logout`, {
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/auth/logout`, {
         method: "POST",
         credentials: "include",
       });
+      if (response.ok) {
+        setIsLogedIn(false);
+      } else {
+        console.log("Logout failed on server");
+      }
     } catch (err) {
       console.log("Logout error", err);
     }
-    setIsLogedIn(false);
   };
 
   useEffect(() => {

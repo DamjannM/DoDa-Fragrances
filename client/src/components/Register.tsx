@@ -18,8 +18,8 @@ const Register: React.FC<ChildProps> = ({ setIsRegistered }) => {
     setIsRegistered(true);
   };
 
-  const signUp = async (event?: FormEvent<HTMLFormElement>) => {
-    event?.preventDefault();
+  const signUp = async (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
 
     if (!user.email.includes("@") || !user.email.includes("."))
       return setServerMessage("❌ Invalid email format");

@@ -26,8 +26,8 @@ const Login: React.FC<ChildProps> = ({
   //   setIsLogedIn(true);
   // };
 
-  const handleLogin = async (event?: FormEvent<HTMLFormElement>) => {
-    event?.preventDefault();
+  const handleLogin = async (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
 
     if (!email.includes("@") || !email.includes("."))
       return setServerMessage("❌ Invalid email format");
