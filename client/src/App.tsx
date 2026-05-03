@@ -22,30 +22,30 @@ function App() {
     setIsLogedIn(false);
   };
 
-  useEffect(() => {
-    const checkAuth = async () => {
-      try {
-        const res = await fetch(`${import.meta.env.VITE_API_URL}/auth/me`, {
-          method: "GET",
-          credentials: "include",
-        });
+  // useEffect(() => {
+  //   const checkAuth = async () => {
+  //     try {
+  //       const res = await fetch(`${import.meta.env.VITE_API_URL}/auth/me`, {
+  //         method: "GET",
+  //         credentials: "include",
+  //       });
 
-        if (res.ok) {
-          const data = await res.json();
-          console.log(data);
-          setIsLogedIn(true);
-          setRole(data.role);
-        } else {
-          setIsLogedIn(false);
-        }
-      } catch (err) {
-        console.log("Auth check failed", err);
-        setIsLogedIn(false);
-      }
-    };
+  //       if (res.ok) {
+  //         const data = await res.json();
+  //         console.log(data);
+  //         setIsLogedIn(true);
+  //         setRole(data.role);
+  //       } else {
+  //         setIsLogedIn(false);
+  //       }
+  //     } catch (err) {
+  //       console.log("Auth check failed", err);
+  //       setIsLogedIn(false);
+  //     }
+  //   };
 
-    checkAuth();
-  }, []);
+  //   checkAuth();
+  // }, []);
 
   return (
     <Routes>
