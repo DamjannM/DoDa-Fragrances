@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/set-state-in-effect */
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { useEffect, useState } from "react";
 import Content from "./Content";
