@@ -12,7 +12,7 @@ function App() {
 
   const handleLogout = async () => {
     try {
-      await fetch("http://localhost:5000/auth/logout", {
+      await fetch(`${import.meta.env.VITE_API_URL}/auth/logout`, {
         method: "POST",
         credentials: "include",
       });
@@ -25,7 +25,7 @@ function App() {
   useEffect(() => {
     const checkAuth = async () => {
       try {
-        const res = await fetch("http://localhost:5000/auth/me", {
+        const res = await fetch(`${import.meta.env.VITE_API_URL}/auth/me`, {
           method: "GET",
           credentials: "include",
         });

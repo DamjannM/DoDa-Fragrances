@@ -19,10 +19,13 @@ const SideBarFilter = ({
 
   const fetchBrands = async () => {
     try {
-      const response = await fetch("http://localhost:5000/perfumes/brands", {
-        method: "GET",
-        credentials: "include",
-      });
+      const response = await fetch(
+        `${import.meta.env.VITE_API_URL}/perfumes/brands`,
+        {
+          method: "GET",
+          credentials: "include",
+        },
+      );
       const data = await response.json();
       console.log(data);
       console.log(brands);

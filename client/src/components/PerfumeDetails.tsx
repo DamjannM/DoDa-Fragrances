@@ -58,20 +58,23 @@ const PerfumeDetails = () => {
 
   async function handleSubmitRating() {
     try {
-      const response = await fetch(`http://localhost:5000/perfumes/reviews`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
+      const response = await fetch(
+        `${import.meta.env.VITE_API_URL}/perfumes/reviews`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          credentials: "include",
+          body: JSON.stringify({
+            perfume_id: perfume?.id,
+            scent: scent,
+            projection: projection,
+            longevity: longevity,
+            comment: comment,
+          }),
         },
-        credentials: "include",
-        body: JSON.stringify({
-          perfume_id: perfume?.id,
-          scent: scent,
-          projection: projection,
-          longevity: longevity,
-          comment: comment,
-        }),
-      });
+      );
       if (!response.ok) {
         throw new Error("Failed to submit rating");
       }
@@ -87,10 +90,13 @@ const PerfumeDetails = () => {
 
   async function fetchPerfumeDetails(id: number) {
     try {
-      const res = await fetch(`http://localhost:5000/perfumes/${id}`, {
-        method: "GET",
-        credentials: "include",
-      });
+      const res = await fetch(
+        `${import.meta.env.VITE_API_URL}/perfumes/${id}`,
+        {
+          method: "GET",
+          credentials: "include",
+        },
+      );
       if (!res.ok) {
         throw new Error("Failed to fetch perfume details");
       }
@@ -104,7 +110,7 @@ const PerfumeDetails = () => {
   async function fetchReviews(perfume_id: number) {
     try {
       const res = await fetch(
-        `http://localhost:5000/perfumes/reviews/${perfume_id}`,
+        `${import.meta.env.VITE_API_URL}/perfumes/reviews/${perfume_id}`,
         {
           method: "GET",
           credentials: "include",
@@ -124,7 +130,7 @@ const PerfumeDetails = () => {
   async function fetchUserReview(perfume_id: number) {
     try {
       const res = await fetch(
-        `http://localhost:5000/perfumes/reviews/${perfume_id}/id`,
+        `${import.meta.env.VITE_API_URL}/perfumes/reviews/${perfume_id}/id`,
         {
           method: "GET",
           credentials: "include",

@@ -42,7 +42,7 @@ const Home = ({ onLogout, role }: HomeProps) => {
       params.append("offset", offset.toString());
 
       const response = await fetch(
-        `http://localhost:5000/perfumes?${params.toString()}`,
+        `${import.meta.env.VITE_API_URL}/perfumes?${params.toString()}`,
         {
           method: "GET",
           credentials: "include",

@@ -22,14 +22,17 @@ const Register: React.FC<ChildProps> = ({ setIsRegistered }) => {
       return setServerMessage("❌ Invalid email format");
     if (user.password.length < 8)
       return setServerMessage("❌ Password must contain atleast 8 characters");
-    const response = await fetch("http://localhost:5000/auth/register", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        email: user.email,
-        password: user.password,
-      }),
-    });
+    const response = await fetch(
+      `${import.meta.env.VITE_API_URL}/auth/register`,
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          email: user.email,
+          password: user.password,
+        }),
+      },
+    );
 
     const data = await response.json();
     if (!response.ok) {

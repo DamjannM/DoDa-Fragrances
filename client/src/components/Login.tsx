@@ -29,16 +29,19 @@ const Login: React.FC<ChildProps> = ({
     if (!email.includes("@") && !email.includes("."))
       return setServerMessage("❌ Invalid email format");
     try {
-      const response = await fetch("http://localhost:5000/auth/login", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        credentials: "include",
-        body: JSON.stringify({
-          email,
-          password,
-          rememberMe,
-        }),
-      });
+      const response = await fetch(
+        `${import.meta.env.VITE_API_URL}/auth/login`,
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          credentials: "include",
+          body: JSON.stringify({
+            email,
+            password,
+            rememberMe,
+          }),
+        },
+      );
       const data = await response.json();
       setEmail("");
       setPassword("");
