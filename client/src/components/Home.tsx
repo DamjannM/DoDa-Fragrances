@@ -1,5 +1,4 @@
 /* eslint-disable react-hooks/set-state-in-effect */
-/* eslint-disable @typescript-eslint/no-unused-vars */
 import { useEffect, useState } from "react";
 import Content from "./Content";
 import Header from "./Header";
@@ -27,8 +26,8 @@ const Home = ({ onLogout, role }: HomeProps) => {
   const [filter, setFilter] = useState("");
   const [searchQuery, setSearchQuery] = useState("");
   const [perfumes, setPerfumes] = useState<Perfume[]>([]);
-  const [limit, setLimit] = useState(20);
-  const [offset, setOffset] = useState(0);
+  const [limit] = useState(20);
+  const [offset] = useState(0);
 
   const fetchPerfumes = async (
     searchQuery: string,
@@ -55,11 +54,6 @@ const Home = ({ onLogout, role }: HomeProps) => {
     } catch (error) {
       console.error("Error fetching perfumes:", error);
     }
-  };
-
-  const handleLoadMore = () => {
-    setOffset((prevOffset) => prevOffset + limit);
-    setLimit((prevLimit) => prevLimit + 20);
   };
 
   useEffect(() => {
