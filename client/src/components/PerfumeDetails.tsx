@@ -188,8 +188,8 @@ const PerfumeDetails = () => {
 
   return (
     <>
-      <div className="fixed inset-0 z-50 flex items-center justify-center bg-white ">
-        <div className="w-screen h-screen relative overflow-y-auto mx-1!">
+      <div className="fixed inset-0 z-50 bg-white ">
+        <div className="w-screen min-h-dvh relative overflow-y-auto mx-1!">
           <IoMdArrowRoundBack
             size={28}
             className="cursor-pointer absolute top-2 left-2 text-gray-400 hover:text-gray-600 transition-colors z-10"
@@ -318,7 +318,7 @@ const PerfumeDetails = () => {
               userReview.map((review) => (
                 <div
                   key={review.id}
-                  className="border rounded-2xl border-amber-100 shadow-lg shadow-amber-100 my-2!"
+                  className="border rounded-2xl border-amber-100 shadow-lg shadow-amber-100 my-2! mx-1!"
                 >
                   <div className="flex justify-between items-center ml-2! mr-2!">
                     <p className="text-gray-700">{review.email}</p>
