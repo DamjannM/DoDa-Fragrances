@@ -19,6 +19,7 @@ app.use(
       "http://localhost:5173",
       "https://do-da-fragrances.vercel.app",
       "https://do-da-fragrances.onrender.com",
+      "https://doda-fragrances.onrender.com",
     ],
     credentials: true,
   }),

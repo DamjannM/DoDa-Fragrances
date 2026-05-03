@@ -1,5 +1,6 @@
 // import { useEffect, useState } from "react";
-import { useEffect, useState } from "react";
+import type { FormEvent } from "react";
+import { useState } from "react";
 import { FaUser, FaLock } from "react-icons/fa";
 
 interface ChildProps {
@@ -25,8 +26,10 @@ const Login: React.FC<ChildProps> = ({
   //   setIsLogedIn(true);
   // };
 
-  const handleLogin = async () => {
-    if (!email.includes("@") && !email.includes("."))
+  const handleLogin = async (event?: FormEvent<HTMLFormElement>) => {
+    event?.preventDefault();
+
+    if (!email.includes("@") || !email.includes("."))
       return setServerMessage("❌ Invalid email format");
     try {
       const response = await fetch(
@@ -57,20 +60,13 @@ const Login: React.FC<ChildProps> = ({
       console.log("Login failed", err);
     }
   };
-  useEffect(() => {
-    const handleEnterKeyDown = (event: KeyboardEvent) => {
-      if (event.key === "Enter") {
-        handleLogin();
-      }
-    };
-
-    window.addEventListener("keydown", handleEnterKeyDown);
-    return () => window.removeEventListener("keydown", handleEnterKeyDown);
-  });
   return (
     <div className="flex flex-1 items-center justify-center">
       <div className="shadow-2xl shadow-stone-800  min-w-8/12 min-h-8/12 border-2 border-amber-50 rounded-2xl bg-amber-50/30 backdrop-blur-md p-1! text-stone-800/90 text-xl">
-        <form action="" className="flex flex-col items-center gap-3">
+        <form
+          onSubmit={handleLogin}
+          className="flex flex-col items-center gap-3"
+        >
           <h1 className="text-2xl font-bold">Login</h1>
           <p>{serverMessage}</p>
           <div className="flex border-stone-400 border-2 rounded-2xl p-1! items-center ">
@@ -108,14 +104,17 @@ const Login: React.FC<ChildProps> = ({
               />
               Remember me
             </label>
-            <a href="#" className="font-bold underline">
+            <a
+              href="#"
+              className="font-bold underline"
+              onClick={(e) => e.preventDefault()}
+            >
               Forgot password?
             </a>
           </div>
           <button
             type="submit"
             className=" border-stone-800 border-2 rounded-2xl w-25 font-bold"
-            onClick={handleLogin}
           >
             Login
           </button>
@@ -124,7 +123,10 @@ const Login: React.FC<ChildProps> = ({
             <a
               href="#"
               className="font-bold underline"
-              onClick={handleRegister}
+              onClick={(e) => {
+                e.preventDefault();
+                handleRegister();
+              }}
             >
               Register
             </a>

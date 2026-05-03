@@ -39,7 +39,7 @@ const PerfumeCard = ({
           />
         </div>
         <div className="flex flex-col items-center justify-end p-2">
-          <p className="text-sm text-center wrap-break-word whitespace-normal">
+          <p className="text-sm text-center wrap-break-word whitespace-normal flex flex-col">
             <span className="inline-block max-w-full">{brand}</span>{" "}
             <span className="inline-block">{name}</span>
           </p>
