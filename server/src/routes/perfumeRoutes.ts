@@ -21,7 +21,11 @@ router.post("/", async (req, res) => {
 
 //fetch all perfumes with filter and search
 router.get("/", async (req, res) => {
-  const { searchQuery, filter, limit, offset } = req.query;
+  const { filter, limit, offset } = req.query;
+  let { searchQuery } = req.query;
+
+  searchQuery =
+    typeof req.query.search === "string" ? req.query.search : undefined;
 
   const brands =
     typeof req.query.filter === "string"
@@ -52,6 +56,12 @@ router.get("/", async (req, res) => {
           : {},
       ],
     },
+    orderBy: {
+      reviews: {
+        _count: "asc",
+      },
+    },
+
     skip: Number(offset),
     take: Number(limit),
   });
@@ -165,9 +175,10 @@ router.get("/reviews/:perfume_id/id", async (req, res) => {
     },
     include: { user: { select: { email: true } } },
   });
+
   const result = {
     ...review,
-    email: review.user.email,
+    email: review!.user.email,
   };
 
   res.json(result);

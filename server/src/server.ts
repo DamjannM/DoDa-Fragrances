@@ -14,6 +14,7 @@ const PORT = process.env.PORT || 5000;
 app.use(
   cors({
     origin: [
+      "http://172.28.160.1:5173/",
       "http://localhost:5173",
       "https://do-da-fragrances.vercel.app",
       "https://do-da-fragrances.onrender.com",

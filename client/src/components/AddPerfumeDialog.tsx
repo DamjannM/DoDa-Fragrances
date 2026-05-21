@@ -20,7 +20,8 @@ const AddPerfumeDialog = ({
   const [description, setDescription] = React.useState("");
   const [image_url, setImageUrl] = React.useState("");
 
-  async function handleSubmit() {
+  async function handleSubmit(e: React.FormEvent) {
+    e.preventDefault();
     if (!brand || !name || !description || !image_url) {
       return alert("Please fill in all fields");
     }
@@ -58,7 +59,7 @@ const AddPerfumeDialog = ({
         <h2 className="text-2xl font-bold text-center text-gray-800 mb-8">
           Add New Perfume
         </h2>
-        <form className="flex flex-col flex-1 gap-4">
+        <form className="flex flex-col flex-1 gap-4" onSubmit={handleSubmit}>
           <input
             type="text"
             placeholder="Brand"
@@ -87,7 +88,6 @@ const AddPerfumeDialog = ({
           <button
             type="submit"
             className="w-full py-3 bg-amber-600 text-white font-semibold rounded-lg hover:bg-amber-700 transition-colors shadow-md"
-            onClick={handleSubmit}
           >
             Add Perfume
           </button>
