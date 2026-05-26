@@ -21,7 +21,7 @@ app.use(
       "https://doda-fragrances.onrender.com",
     ],
 
-    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"],
   }),
 );
 app.use(express.json());

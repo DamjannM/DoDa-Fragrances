@@ -2,6 +2,13 @@ import express from "express";
 import prisma from "../prismaClient";
 
 const router = express.Router();
+//function for rounding total rating to nearest integer
+const totalRatingRound = (value: number) => {
+  const integerPart = Math.floor(value);
+  const decimalPart = value - integerPart;
+
+  return decimalPart < 0.5 ? integerPart : integerPart + 1;
+};
 
 // create an perfume
 router.post("/", async (req, res) => {
@@ -25,66 +32,97 @@ router.get("/", async (req, res) => {
   let { searchQuery } = req.query;
 
   searchQuery =
-    typeof req.query.search === "string" ? req.query.search : undefined;
+    typeof req.query.searchQuery === "string"
+      ? req.query.searchQuery
+      : undefined;
 
   const brands =
     typeof req.query.filter === "string"
       ? req.query.filter.split(",").map((b) => b.trim())
       : [];
 
-  const perfumes = await prisma.perfume.findMany({
-    where: {
-      AND: [
-        searchQuery
-          ? {
-              OR: [
-                { name: { contains: searchQuery, mode: "insensitive" } },
-                { brand: { contains: searchQuery, mode: "insensitive" } },
-              ],
-            }
-          : {},
-        filter
-          ? {
-              ...(brands.length > 0 && {
-                OR: brands.map((brand) => ({
-                  brand: {
-                    in: brands,
-                  },
-                })),
-              }),
-            }
-          : {},
-      ],
-    },
-    orderBy: {
-      reviews: {
-        _count: "asc",
+  //fetching perfumes with count
+  const [perfumes, perfumesCount, ratings] = await Promise.all([
+    prisma.perfume.findMany({
+      where: {
+        AND: [
+          searchQuery
+            ? {
+                OR: [
+                  { name: { contains: searchQuery, mode: "insensitive" } },
+                  { brand: { contains: searchQuery, mode: "insensitive" } },
+                ],
+              }
+            : {},
+          filter && brands.length > 0
+            ? {
+                brand: { in: brands },
+              }
+            : {},
+        ],
       },
-    },
+      orderBy: {
+        reviews: {
+          _count: "asc",
+        },
+      },
 
-    skip: Number(offset),
-    take: Number(limit),
-  });
-
-  const ratings = await prisma.review.groupBy({
-    by: ["perfume_id"],
-    _avg: {
-      total_rating: true,
-    },
-  });
+      skip: Number(offset),
+      take: Number(limit),
+    }),
+    prisma.perfume.count({
+      where: {
+        AND: [
+          searchQuery
+            ? {
+                OR: [
+                  { name: { contains: searchQuery, mode: "insensitive" } },
+                  { brand: { contains: searchQuery, mode: "insensitive" } },
+                ],
+              }
+            : {},
+          filter && brands.length > 0
+            ? {
+                brand: { in: brands },
+              }
+            : {},
+        ],
+      },
+    }),
+    prisma.review.groupBy({
+      by: ["perfume_id"],
+      _avg: {
+        total_rating: true,
+      },
+    }),
+  ]);
 
   const ratingMap = new Map(
-    ratings.map((r: any) => [
+    ratings.map((r) => [
       r.perfume_id,
-      Math.round(r._avg.total_rating * 100) / 100,
+      Math.round((r._avg.total_rating ?? 0) * 100) / 100,
     ]),
   );
 
-  const result = perfumes.map((p: any) => ({
+  //creating total rating of perfume and sorting by unrated first then by rating
+  const result = perfumes.map((p) => ({
     ...p,
     total_rating: ratingMap.get(p.id) ?? 0,
   }));
-  res.json(result);
+
+  result.sort((a, b) => {
+    // 1. unrated first
+    const aUnrated = a.total_rating === 0;
+    const bUnrated = b.total_rating === 0;
+
+    if (aUnrated && !bUnrated) return -1;
+    if (bUnrated && !aUnrated) return 1;
+
+    // 2. then by rating (highest first)
+    return b.total_rating - a.total_rating;
+  });
+
+  res.json({ perfumes: result, count: perfumesCount });
 });
 
 // fetch all unique brands
@@ -132,6 +170,9 @@ router.get("/:id", async (req, res) => {
 // create review
 router.post("/reviews", async (req, res) => {
   const { perfume_id, scent, projection, longevity, comment } = req.body;
+
+  const average = (scent + projection + longevity) / 3;
+
   const result = await prisma.review.create({
     data: {
       user_id: req.userId!,
@@ -140,8 +181,7 @@ router.post("/reviews", async (req, res) => {
       projection,
       longevity,
       comment,
-      total_rating:
-        Math.round(((scent + projection + longevity) / 3) * 100) / 100,
+      total_rating: totalRatingRound(average),
     },
   });
 
@@ -153,6 +193,35 @@ router.post("/reviews", async (req, res) => {
     comment,
     total_rating: result.total_rating,
   });
+});
+
+//update review
+router.patch("/reviews", async (req, res) => {
+  const { perfume_id, scent, projection, longevity, comment } = req.body;
+
+  const review = await prisma.review.findFirst({
+    where: {
+      perfume_id,
+      user_id: req.userId!,
+    },
+  });
+
+  if (!review) {
+    return res.status(404).json({ message: "Review not found" });
+  }
+
+  const updatedReview = await prisma.review.update({
+    where: { id: review.id },
+    data: {
+      scent,
+      projection,
+      longevity,
+      comment,
+      total_rating: totalRatingRound((scent + projection + longevity) / 3),
+    },
+  });
+
+  res.json(updatedReview);
 });
 
 router.get("/reviews/:perfume_id", async (req, res) => {

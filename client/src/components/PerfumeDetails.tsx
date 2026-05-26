@@ -40,23 +40,13 @@ const PerfumeDetails = () => {
   const [hoveredLongevity, setHoveredLongevity] = useState<number>(0);
   const [comment, setComment] = useState<string>("");
   const [userReview, setUserReview] = useState<Review[] | null>(null);
-
-  const handleScentClick = (rating: number) => {
-    setScent(rating);
-    console.log("Scent rating saved:", rating);
-  };
-
-  const handleProjectionClick = (rating: number) => {
-    setProjection(rating);
-    console.log("Projection rating saved:", rating);
-  };
-
-  const handleLongevityClick = (rating: number) => {
-    setLongevity(rating);
-    console.log("Longevity rating saved:", rating);
-  };
+  const [isRatedByUser, setIsRatedByUser] = useState<boolean>(false);
 
   async function handleSubmitRating() {
+    if (scent === 0 || projection === 0 || longevity === 0) {
+      alert("Please provide ratings for scent, projection, and longevity.");
+      return;
+    }
     try {
       const token = localStorage.getItem("token");
       const response = await fetch(
@@ -84,8 +74,46 @@ const PerfumeDetails = () => {
       fetchPerfumeDetails(perfume!.id);
       fetchReviews(perfume!.id);
       setComment("");
+      setIsRatedByUser(true);
     } catch (error) {
       console.error("Error submitting rating:", error);
+    }
+  }
+
+  async function updateRating() {
+    if (scent === 0 || projection === 0 || longevity === 0) {
+      alert("Please provide ratings for scent, projection, and longevity.");
+      return;
+    }
+    try {
+      const token = localStorage.getItem("token");
+      const response = await fetch(
+        `${import.meta.env.VITE_API_URL}/perfumes/reviews`,
+        {
+          method: "PATCH",
+          headers: {
+            "Content-Type": "application/json",
+            ...(token && { Authorization: `Bearer ${token}` }),
+          },
+          body: JSON.stringify({
+            perfume_id: perfume?.id,
+            scent: scent,
+            projection: projection,
+            longevity: longevity,
+            comment: comment,
+          }),
+        },
+      );
+      if (!response.ok) {
+        throw new Error("Failed to update rating");
+      }
+      const data = await response.json();
+      console.log("Rating updated:", data);
+      fetchPerfumeDetails(perfume!.id);
+      fetchReviews(perfume!.id);
+      setComment("");
+    } catch (error) {
+      console.error("Error updating rating:", error);
     }
   }
 
@@ -147,6 +175,8 @@ const PerfumeDetails = () => {
       setScent(data.scent);
       setProjection(data.projection);
       setLongevity(data.longevity);
+      setComment(data.comment);
+      setIsRatedByUser(true);
       console.log("User review fetched:", data);
     } catch (error) {
       console.error("Error fetching user review:", error);
@@ -188,8 +218,8 @@ const PerfumeDetails = () => {
 
   return (
     <>
-      <div className="fixed inset-0 z-50 bg-white ">
-        <div className="w-screen min-h-dvh relative overflow-y-auto mx-1!">
+      <div className="fixed inset-0 z-50 overflow-y-auto bg-white touch-scroll">
+        <div className="w-screen min-h-screen relative mx-1 pb-[calc(1.5rem+env(safe-area-inset-bottom))] pt-4">
           <IoMdArrowRoundBack
             size={28}
             className="cursor-pointer absolute top-2 left-2 text-gray-400 hover:text-gray-600 transition-colors z-10"
@@ -205,9 +235,9 @@ const PerfumeDetails = () => {
 
             <div className="text-center">
               <h2 className="text-xl font-bold text-gray-800">
-                {perfume.name}
+                {perfume.brand}
               </h2>
-              <p className="text-lg text-gray-600 mt-1">{perfume.brand}</p>
+              <p className="text-lg text-gray-600 mt-1">{perfume.name}</p>
             </div>
 
             {perfume.total_rating !== undefined && (
@@ -238,7 +268,7 @@ const PerfumeDetails = () => {
                 <span
                   key={i}
                   className="text-2xl cursor-pointer transition-colors"
-                  onClick={() => handleScentClick(i + 1)}
+                  onClick={() => setScent(i + 1)}
                   onMouseEnter={() => setHoveredScent(i + 1)}
                   onMouseLeave={() => setHoveredScent(0)}
                 >
@@ -259,7 +289,7 @@ const PerfumeDetails = () => {
                 <span
                   key={i}
                   className="text-2xl cursor-pointer transition-colors"
-                  onClick={() => handleProjectionClick(i + 1)}
+                  onClick={() => setProjection(i + 1)}
                   onMouseEnter={() => setHoveredProjection(i + 1)}
                   onMouseLeave={() => setHoveredProjection(0)}
                 >
@@ -280,7 +310,7 @@ const PerfumeDetails = () => {
                 <span
                   key={i}
                   className="text-2xl cursor-pointer transition-colors"
-                  onClick={() => handleLongevityClick(i + 1)}
+                  onClick={() => setLongevity(i + 1)}
                   onMouseEnter={() => setHoveredLongevity(i + 1)}
                   onMouseLeave={() => setHoveredLongevity(0)}
                 >
@@ -303,12 +333,21 @@ const PerfumeDetails = () => {
             />
           </div>
           <div className="flex justify-center items-center">
-            <button
-              className="rounded-2xl bg-orange-400 text-white p-1! cursor-pointer hover:bg-orange-600"
-              onClick={handleSubmitRating}
-            >
-              Rate Perfume
-            </button>
+            {!isRatedByUser ? (
+              <button
+                className="rounded-2xl bg-orange-400 text-white p-1! cursor-pointer hover:bg-orange-600"
+                onClick={handleSubmitRating}
+              >
+                Rate Perfume
+              </button>
+            ) : (
+              <button
+                className="rounded-2xl bg-orange-400 text-white p-1! cursor-pointer hover:bg-orange-600"
+                onClick={updateRating}
+              >
+                Edit Review
+              </button>
+            )}
           </div>
           <div className="w-full mt-2!">
             <h3 className="text-lg font-semibold text-gray-800 mb-2!">

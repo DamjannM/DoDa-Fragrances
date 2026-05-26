@@ -10,11 +10,16 @@ body {
   display: flex;
   justify-content: center;
   align-items: center;
-  min-height: 100vh;
+  min-height: 100dvh;
   background-image: url("../background.png");
   background-size: cover;
   background-position: center;
+  background-attachment: fixed;
   background-repeat: no-repeat;
+}
+
+.touch-scroll {
+  -webkit-overflow-scrolling: touch;
 }
 
 /*.scroll-hide {

@@ -1,13 +1,14 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 // import { useState } from "react";
 import { useEffect, useState } from "react";
-import { IoMdArrowRoundBack } from "react-icons/io";
+import { MdDone } from "react-icons/md";
 
 interface SideBarFilterProps {
   setShowHamburgerMenu: (value: boolean) => void;
   setSelectedBrands: (brands: string[]) => void;
   setFilter: (filter: string) => void;
   selectedBrands: string[];
+  setOffset: (offset: number) => void;
 }
 
 const SideBarFilter = ({
@@ -15,6 +16,7 @@ const SideBarFilter = ({
   selectedBrands,
   setSelectedBrands,
   setFilter,
+  setOffset,
 }: SideBarFilterProps) => {
   const [brands, setBrands] = useState<string[]>([]);
 
@@ -45,8 +47,10 @@ const SideBarFilter = ({
   const handleCheckboxChange = (brand: string) => {
     if (selectedBrands.includes(brand)) {
       setSelectedBrands(selectedBrands.filter((b) => b !== brand));
+      setOffset(0);
     } else {
       setSelectedBrands([...selectedBrands, brand]);
+      setOffset(0);
     }
   };
 
@@ -60,32 +64,32 @@ const SideBarFilter = ({
   }, [selectedBrands, setFilter]);
 
   return (
-    <div className="fixed left-0 top-0 h-full w-[60%] bg-white p-4 z-50 overflow-y-auto">
-      <IoMdArrowRoundBack
-        size={20}
-        className="cursor-pointer top-1 right-1 absolute"
+    <div className="fixed inset-0 z-50 flex bg-black/50">
+      <div className="fixed left-0 top-0 h-full w-[60%] bg-white p-4 z-50 overflow-y-auto">
+        <MdDone
+          size={20}
+          className="cursor-pointer top-1 right-1 absolute"
+          onClick={() => setShowHamburgerMenu(false)}
+        />
+        <h2 className="text-lg font-bold ml-1!">Filter by Brand</h2>
+        <ul className="flex flex-col">
+          {brands.map((brand, index) => (
+            <li
+              key={index}
+              className={`cursor-pointer hover:bg-gray-200 p-2! flex items-center justify-center ${index % 2 === 0 ? "bg-gray-100" : "bg-white"} ${selectedBrands.includes(brand) ? "text-pink-900 font-bold" : ""}`}
+              onClick={() => {
+                handleCheckboxChange(brand);
+              }}
+            >
+              {brand}
+            </li>
+          ))}
+        </ul>
+      </div>
+      <div
+        className="flex-1 cursor-pointer"
         onClick={() => setShowHamburgerMenu(false)}
       />
-      <h2 className="text-lg font-bold mb-4">Filter by Brand</h2>
-      <ul className="flex flex-col gap-2">
-        {brands.map((brand, index) => (
-          <li
-            key={index}
-            className="cursor-pointer hover:bg-gray-200 p-2 flex items-center gap-2"
-            onClick={() => {
-              handleCheckboxChange(brand);
-            }}
-          >
-            <input
-              type="checkbox"
-              checked={selectedBrands.includes(brand)}
-              onChange={() => handleCheckboxChange(brand)}
-              className="w-4 h-4"
-            />
-            {brand}
-          </li>
-        ))}
-      </ul>
     </div>
   );
 };

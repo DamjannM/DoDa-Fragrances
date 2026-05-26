@@ -1,5 +1,5 @@
 /* eslint-disable react-hooks/set-state-in-effect */
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Content from "./Content";
 import Header from "./Header";
 import SideBarFilter from "./SideBarFilter";
@@ -27,7 +27,9 @@ const Home = ({ onLogout, role }: HomeProps) => {
   const [searchQuery, setSearchQuery] = useState("");
   const [perfumes, setPerfumes] = useState<Perfume[]>([]);
   const [limit] = useState(20);
-  const [offset] = useState(0);
+  const [offset, setOffset] = useState(0);
+  const [count, setCount] = useState(0);
+  const loaderRef = useRef<HTMLDivElement | null>(null);
 
   const fetchPerfumes = async (
     searchQuery: string,
@@ -51,7 +53,10 @@ const Home = ({ onLogout, role }: HomeProps) => {
         },
       );
       const data = await response.json();
-      setPerfumes(data);
+      setPerfumes((prevPerfumes) =>
+        offset === 0 ? data.perfumes : [...prevPerfumes, ...data.perfumes],
+      );
+      setCount(data.count);
     } catch (error) {
       console.error("Error fetching perfumes:", error);
     }
@@ -60,14 +65,39 @@ const Home = ({ onLogout, role }: HomeProps) => {
   useEffect(() => {
     fetchPerfumes(searchQuery, filter, limit, offset);
   }, [searchQuery, filter, limit, offset]);
+
+  useEffect(() => {
+    const currentLoader = loaderRef.current;
+    if (!currentLoader || perfumes.length >= count) return;
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries[0].isIntersecting && perfumes.length < count) {
+          setOffset((prevOffset) => prevOffset + limit);
+        }
+      },
+      {
+        root: null,
+        rootMargin: "0px",
+        threshold: 0.1,
+      },
+    );
+
+    observer.observe(currentLoader);
+    return () => observer.disconnect();
+  }, [count, limit, perfumes.length]);
+
   return (
     <div className="flex flex-col">
       <Header
+        showHamburgerMenu={showHamburgerMenu}
+        showAddPerfume={showAddPerfume}
         setShowHamburgerMenu={setShowHamburgerMenu}
         setShowAddPerfume={setShowAddPerfume}
         onLogout={onLogout}
         role={role}
         setSearchQuery={setSearchQuery}
+        setOffset={setOffset}
       />
       <Content
         showHamburgerMenu={showHamburgerMenu}
@@ -80,6 +110,7 @@ const Home = ({ onLogout, role }: HomeProps) => {
           selectedBrands={selectedBrands}
           setSelectedBrands={setSelectedBrands}
           setFilter={setFilter}
+          setOffset={setOffset}
         />
       )}
       {showAddPerfume && (
@@ -88,6 +119,7 @@ const Home = ({ onLogout, role }: HomeProps) => {
           fetchPerfumes={fetchPerfumes}
         />
       )}
+      <div ref={loaderRef} className="h-1" />
     </div>
   );
 };
