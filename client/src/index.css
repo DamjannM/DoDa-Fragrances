@@ -1,9 +1,11 @@
 @import "tailwindcss";
+
 * {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
-  font-family: "Roboto";
+  font-family: "Inter" sans-serif;
+  letter-spacing: 0.4px;
 }
 
 body {
@@ -11,7 +13,8 @@ body {
   justify-content: center;
   align-items: center;
   min-height: 100dvh;
-  background-image: url("../background.png");
+  /* background-image: url("../background.png"); */
+  background: linear-gradient(to bottom, #ffffff 10%, #f8e8fa 90%);
   background-size: cover;
   background-position: center;
   background-attachment: fixed;
@@ -21,6 +24,25 @@ body {
 .touch-scroll {
   -webkit-overflow-scrolling: touch;
 }
+
+.bgimage {
+  background-image: url("../background.png");
+  background-size: cover;
+  background-position: center;
+  background-attachment: fixed;
+  background-repeat: no-repeat;
+}
+
+@theme {
+  --color-primary: #925af8;
+  --color-secondary: #fdf9fc;
+  --color-accent: #f8e8fa;
+}
+/* 
+perfume card color #fdf8fc
+background gradient color #f0edfc
+button color #925af8
+search #f9f8fa
 
 /*.scroll-hide {
   scrollbar-width: none;

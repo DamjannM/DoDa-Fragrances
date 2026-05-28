@@ -63,31 +63,31 @@ const AddPerfumeDialog = ({
           <input
             type="text"
             placeholder="Brand"
-            className="p-0.5! w-full px-4 py-3 border-b border-b-amber-200 text-center  rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-transparent"
+            className="p-0.5! w-full px-4 py-3 border-b border-b-primary/50 text-center  rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
             onChange={(e) => setBrand(e.target.value)}
           />
           <input
             type="text"
             placeholder="Name"
-            className="p-0.5! w-full px-4 py-3 border-b border-b-amber-200 text-center  rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-transparent"
+            className="p-0.5! w-full px-4 py-3 border-b border-b-primary/50 text-center  rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
             onChange={(e) => setName(e.target.value)}
           />
           <input
             type="text"
             placeholder="Description"
-            className="p-0.5! w-full px-4 py-3 border-b border-b-amber-200 text-center  rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-transparent"
+            className="p-0.5! w-full px-4 py-3 border-b border-b-primary/50 text-center  rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
             onChange={(e) => setDescription(e.target.value)}
           />
           <input
             type="text"
             placeholder="Image URL"
-            className="p-0.5! w-full px-4 py-3 border-b border-b-amber-200 text-center  rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-transparent"
+            className="p-0.5! w-full px-4 py-3 border-b border-b-primary/50 text-center  rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
             onChange={(e) => setImageUrl(e.target.value)}
           />
           <div className="flex-1" />
           <button
             type="submit"
-            className="w-full py-3 bg-amber-600 text-white font-semibold rounded-lg hover:bg-amber-700 transition-colors shadow-md"
+            className="w-full py-3 bg-primary text-white rounded-lg shadow-md"
           >
             Add Perfume
           </button>

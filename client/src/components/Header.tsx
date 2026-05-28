@@ -1,4 +1,7 @@
-import { MdOutlineSettingsInputComponent } from "react-icons/md";
+import { HiOutlineMenuAlt2 } from "react-icons/hi";
+import { CiSearch } from "react-icons/ci";
+import { FaRegUser } from "react-icons/fa";
+import { LuPlus } from "react-icons/lu";
 
 interface HeaderProps {
   showHamburgerMenu: boolean;
@@ -23,37 +26,36 @@ const Header = ({
 }: HeaderProps) => {
   return (
     <div
-      className={`bg-white/70 h-13 flex items-center justify-between shadow-2xl shadow-stone-800/50 p-2! ${showHamburgerMenu || showAddPerfume ? "blur-sm" : ""}`}
+      className={`bg-white/70 h-13 flex items-center justify-between {shadow-2xl shadow-stone-800/50} p-2! ${showHamburgerMenu || showAddPerfume ? "blur-sm" : ""}`}
     >
-      <div className="gap-1 flex items-center">
-        <MdOutlineSettingsInputComponent
+      <div className="gap-2 flex items-center">
+        <HiOutlineMenuAlt2
           size={24}
           className="cursor-pointer"
           onClick={() => setShowHamburgerMenu(true)}
         />
-        <input
-          type="text"
-          placeholder="Search"
-          className="w-20 rounded-2xl border-gray-400 border-[1.9px] p-1! outline-none bg-white/50 focus:border-purple-500 transition-colors duration-1000 text-sm"
-          onChange={(e) => (setSearchQuery(e.target.value), setOffset(0))}
-        />
+        <div className="rounded-2xl border border-gray-100 flex gap-1 justify-between items-center bg-secondary max-w-45">
+          <CiSearch color="gray" size={18} strokeWidth={1} />
+          <input
+            type="text"
+            placeholder="Search perfumes..."
+            className="py-2! outline-none text-sm text-gray-700 max-w-35"
+            onChange={(e) => (setSearchQuery(e.target.value), setOffset(0))}
+          />
+        </div>
       </div>
 
-      <div className="flex gap-2 items-center">
+      <div className="flex gap-3! items-center mr-1!">
         {role == "admin" && (
           <button
-            className="rounded-2xl bg-purple-500 text-white p-1! cursor-pointer hover:bg-fuchsia-700"
+            className="flex items-center rounded-2xl bg-primary text-white p-2! cursor-pointer text-sm gap-1!"
             onClick={() => setShowAddPerfume(true)}
           >
             Add Perfume
+            <LuPlus size={14} color="white" />
           </button>
         )}
-        <button
-          className="rounded-2xl bg-orange-400 text-white p-1! cursor-pointer hover:bg-orange-600"
-          onClick={onLogout}
-        >
-          Log Out
-        </button>
+        <FaRegUser className="cursor-pointer" onClick={onLogout} size={20} />
       </div>
     </div>
   );

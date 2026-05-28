@@ -1,7 +1,7 @@
 // import { useEffect, useState } from "react";
 import type { FormEvent } from "react";
 import { useState } from "react";
-import { FaUser, FaLock } from "react-icons/fa";
+import { CiMail, CiLock } from "react-icons/ci";
 
 interface ChildProps {
   setIsRegistered: React.Dispatch<React.SetStateAction<boolean>>;
@@ -61,52 +61,58 @@ const Login: React.FC<ChildProps> = ({
     }
   };
   return (
-    <div className="flex flex-1 items-center justify-center">
-      <div className="shadow-2xl shadow-stone-800  min-w-8/12 min-h-8/12 border-2 border-amber-50 rounded-2xl bg-amber-50/30 backdrop-blur-md p-1! text-stone-800/90 text-xl">
+    <div className="flex flex-col flex-1 items-center justify-center">
+      <div className="shadow-xl shadow-gray-300  min-w-8/12 min-h-8/12 border border-gray-100 rounded-2xl bg-secondary backdrop-blur-md p-1! text-gray-800/90 text-xl m-10!">
         <form
           onSubmit={handleLogin}
-          className="flex flex-col items-center gap-3"
+          className="flex flex-col items-center gap-3 w-full justify-start p-3!"
         >
           <h1 className="text-2xl font-bold">Login</h1>
           <p>{serverMessage}</p>
-          <div className="flex border-stone-400 border-2 rounded-2xl p-1! items-center ">
+          <label className="flex justify-start w-full font-semibold text-sm">
+            Email
+          </label>
+          <div className="flex border-stone-200 border rounded-2xl py-2! p-1! items-center justify-start w-full bg-white gap-2">
+            <CiMail />
             <input
               type="text"
-              placeholder="email"
+              placeholder="Enter your email"
               required
-              className="outline-none"
+              className="outline-none p-1! text-xs"
               value={email}
               onChange={(e) => {
                 setEmail(e.target.value);
               }}
             />
-            <FaUser className="text-stone-500" />
           </div>
-          <div className="flex border-stone-400 border-2 rounded-2xl p-1! items-center ">
+          <label className="w-full justify-start font-semibold text-sm">
+            Password
+          </label>
+          <div className="flex border-stone-200 border rounded-2xl py-2! p-1! items-center justify-start w-full bg-white gap-2">
+            <CiLock className="text-stone-500" />
             <input
               type="password"
-              placeholder="password"
+              placeholder="Enter your password"
               required
-              className="outline-none"
+              className="outline-none p-1! text-xs"
               value={password}
               onChange={(e) => {
                 setPassword(e.target.value);
               }}
             />
-            <FaLock className="text-stone-500" />
           </div>
           <div className="gap-10 flex items-center align-middle">
-            <label>
+            <label className="flex gap-2">
               <input
                 type="checkbox"
                 className=""
                 onChange={() => setRememberMe(!rememberMe)}
               />
-              Remember me
+              <p className="text-xs">Remember me</p>
             </label>
             <a
               href="#"
-              className="font-bold underline"
+              className="text-xs text-purple-600"
               onClick={(e) => e.preventDefault()}
             >
               Forgot password?
@@ -114,24 +120,24 @@ const Login: React.FC<ChildProps> = ({
           </div>
           <button
             type="submit"
-            className=" border-stone-800 border-2 rounded-2xl w-25 font-bold"
+            className=" bg-linear-to-r from-primary to-purple-400 items-center rounded-2xl w-full text-xs py-2! text-white mt-5!"
           >
-            Login
+            Log in
           </button>
-          <div className="gap-2 flex">
-            <p>Don't have an account?</p>
-            <a
-              href="#"
-              className="font-bold underline"
-              onClick={(e) => {
-                e.preventDefault();
-                handleRegister();
-              }}
-            >
-              Register
-            </a>
-          </div>
         </form>
+      </div>
+      <div className="gap-2 flex text-xs">
+        <p>Don't have an account?</p>
+        <a
+          href="#"
+          className="text-xs text-purple-600"
+          onClick={(e) => {
+            e.preventDefault();
+            handleRegister();
+          }}
+        >
+          Register
+        </a>
       </div>
     </div>
   );

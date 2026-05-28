@@ -22,9 +22,18 @@ const Content = ({
 }: ContentProps) => {
   return (
     <div
-      className={`flex flex-col items-center justify-center gap-4${showHamburgerMenu || showAddPerfume ? " blur-sm" : ""}`}
+      className={`flex flex-col items-center justify-center gap-2 ${showHamburgerMenu || showAddPerfume ? " blur-sm" : ""}`}
     >
-      <div className="grid grid-cols-2 gap-4 m-1!">
+      <div className="flex items-center justify-between w-full px-3!">
+        <div>
+          <h1 className="font-bold text-lg">Discover & Review</h1>
+          <p className="text-gray-400 text-xs">Your favorite perfumes</p>
+        </div>
+        <div>
+          <img src="./logo.png" alt="logo" className="w-25" />
+        </div>
+      </div>
+      <div className="grid grid-cols-2 gap-3 m-1!">
         {perfumes.map((perfume: Perfume) => (
           <PerfumeCard
             key={perfume.id}

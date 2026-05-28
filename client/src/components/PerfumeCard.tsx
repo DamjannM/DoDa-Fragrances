@@ -30,21 +30,21 @@ const PerfumeCard = ({
 }: PerfumeCardProps) => {
   return (
     <Link to={`/${id}`}>
-      <div className="w-40 h-40 bg-white flex flex-col rounded-2xl cursor-pointer">
-        <div className="flex-1 flex items-center justify-center p-2">
+      <div className="w-45 h-45  bg-secondary flex flex-col rounded-2xl cursor-pointer border-gray-100 border p-2!">
+        <div className="flex-1 flex items-start justify-center">
           <img
             src={image_url}
             alt="Perfume Photo"
             className="w-30 h-25 object-contain"
           />
         </div>
-        <div className="flex flex-col items-center justify-end p-2">
-          <p className="text-sm text-center wrap-break-word whitespace-normal flex flex-col">
-            <span className="inline-block max-w-full">{brand}</span>{" "}
-            <span className="inline-block">{name}</span>
+        <div className="flex flex-col">
+          <p className="text-xs text-center items-start wrap-break-word whitespace-normal flex flex-col">
+            <span className="inline-block max-w-full font-bold">{brand}</span>
+            <span className="inline-block text-gray-400">{name}</span>
           </p>
           {total_rating !== undefined && (
-            <p className="flex">{renderStars(total_rating)}</p>
+            <p className="flex text-sm gap-1">{renderStars(total_rating)}</p>
           )}
         </div>
       </div>

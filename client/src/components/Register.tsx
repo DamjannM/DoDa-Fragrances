@@ -53,7 +53,7 @@ const Register: React.FC<ChildProps> = ({ setIsRegistered }) => {
   };
 
   return (
-    <div className="flex flex-1 items-center justify-center">
+    <div className="flex flex-1 items-center justify-center bgimage">
       <div className="shadow-2xl shadow-stone-800 flex min-w-8/12 min-h-8/12 border-2 border-amber-50 rounded-2xl bg-amber-50/30 backdrop-blur-md p-1! text-stone-800/90 text-xl ">
         <form onSubmit={signUp} className="flex flex-col items-center gap-3">
           <h1 className="text-2xl font-bold">Register</h1>
