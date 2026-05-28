@@ -1,6 +1,6 @@
 import type { FormEvent } from "react";
 import { useState } from "react";
-import { FaUser, FaLock } from "react-icons/fa";
+import { CiLock, CiMail } from "react-icons/ci";
 
 type UserData = {
   email: string;
@@ -53,62 +53,66 @@ const Register: React.FC<ChildProps> = ({ setIsRegistered }) => {
   };
 
   return (
-    <div className="flex flex-1 items-center justify-center bgimage">
-      <div className="shadow-2xl shadow-stone-800 flex min-w-8/12 min-h-8/12 border-2 border-amber-50 rounded-2xl bg-amber-50/30 backdrop-blur-md p-1! text-stone-800/90 text-xl ">
-        <form onSubmit={signUp} className="flex flex-col items-center gap-3">
+    <div className="flex flex-col flex-1 items-center justify-center bgimage">
+      <div className="shadow-xl shadow-gray-300 min-w-69  min-h-8/12 border max-w-96 border-gray-100 rounded-2xl bg-secondary backdrop-blur-md p-1! text-gray-800/90 text-xl m-3!">
+        <form
+          onSubmit={signUp}
+          className="flex flex-col items-center gap-3 w-full justify-start p-3!"
+        >
           <h1 className="text-2xl font-bold">Register</h1>
           <p>{serverMessage}</p>
-          <div className="flex border-stone-400 border-2 rounded-2xl p-1! items-center ">
+          <label className="flex justify-start w-full font-semibold text-sm">
+            Email
+          </label>
+          <div className="flex border-stone-200 border rounded-2xl py-2! p-1! items-center justify-start w-full bg-white gap-2">
+            <CiMail />
             <input
               type="email"
-              placeholder="email"
+              placeholder="Enter your email"
               required
-              className="outline-none"
+              className="outline-none p-1! text-xs"
               value={user.email}
               onChange={(e) => {
                 setUser({ ...user, email: e.target.value });
               }}
             />
-            <FaUser className="text-stone-500" />
           </div>
-          <div className="flex border-stone-400 border-2 rounded-2xl p-1! items-center ">
+          <label className="w-full justify-start font-semibold text-sm">
+            Password
+          </label>
+          <div className="flex border-stone-200 border rounded-2xl py-2! p-1! items-center justify-start w-full bg-white gap-2">
+            <CiLock className="text-stone-500" />
             <input
               type="password"
-              placeholder="password"
+              placeholder="Enter your password"
               required
-              className="outline-none"
+              className="outline-none p-1! text-xs"
               value={user.password}
               onChange={(e) => {
                 setUser({ ...user, password: e.target.value });
               }}
             />
-            <FaLock className="text-stone-500" />
           </div>
-          {/* <div className="gap-10 flex items-center align-middle">
-            <a href="#" className="font-bold underline">
-              Forgot password?
-            </a>
-          </div> */}
           <button
             type="submit"
-            className=" border-stone-800 border-2 rounded-2xl w-25 font-bold"
+            className=" bg-linear-to-r from-primary to-purple-400 items-center rounded-2xl w-full text-xs py-2! text-white mt-2!"
           >
             Register
           </button>
-          <div className="gap-2 flex">
-            <p>Already have an account?</p>
-            <a
-              href="#"
-              className="font-bold underline"
-              onClick={(e) => {
-                e.preventDefault();
-                handleRegister();
-              }}
-            >
-              Login
-            </a>
-          </div>
         </form>
+        <div className="gap-2 flex text-xs justify-center">
+          <p>Already have an account?</p>
+          <a
+            href="#"
+            className="text-xs text-purple-600"
+            onClick={(e) => {
+              e.preventDefault();
+              handleRegister();
+            }}
+          >
+            Login
+          </a>
+        </div>
       </div>
     </div>
   );

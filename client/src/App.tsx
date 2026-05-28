@@ -62,7 +62,7 @@ function App() {
       <Route
         path="/"
         element={
-          <div className="min-h-screen background flex flex-col w-screen">
+          <div className="min-h-dvh background flex flex-col w-screen">
             {/* sm:min-w-full */}
             {isLogedIn ? (
               <Home onLogout={handleLogout} role={role} />

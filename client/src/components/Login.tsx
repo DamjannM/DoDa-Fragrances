@@ -61,8 +61,8 @@ const Login: React.FC<ChildProps> = ({
     }
   };
   return (
-    <div className="flex flex-col flex-1 items-center justify-center">
-      <div className="shadow-xl shadow-gray-300  min-w-8/12 min-h-8/12 border border-gray-100 rounded-2xl bg-secondary backdrop-blur-md p-1! text-gray-800/90 text-xl m-10!">
+    <div className="flex flex-col flex-1 items-center justify-center bgimage">
+      <div className="shadow-xl shadow-gray-300 min-w-69 min-h-8/12 border max-w-96 border-gray-100 rounded-2xl bg-secondary backdrop-blur-md p-1! text-gray-800/90 text-xl m-3!">
         <form
           onSubmit={handleLogin}
           className="flex flex-col items-center gap-3 w-full justify-start p-3!"
@@ -75,7 +75,7 @@ const Login: React.FC<ChildProps> = ({
           <div className="flex border-stone-200 border rounded-2xl py-2! p-1! items-center justify-start w-full bg-white gap-2">
             <CiMail />
             <input
-              type="text"
+              type="email"
               placeholder="Enter your email"
               required
               className="outline-none p-1! text-xs"
@@ -125,19 +125,19 @@ const Login: React.FC<ChildProps> = ({
             Log in
           </button>
         </form>
-      </div>
-      <div className="gap-2 flex text-xs">
-        <p>Don't have an account?</p>
-        <a
-          href="#"
-          className="text-xs text-purple-600"
-          onClick={(e) => {
-            e.preventDefault();
-            handleRegister();
-          }}
-        >
-          Register
-        </a>
+        <div className="gap-2 flex text-xs justify-center">
+          <p>Don't have an account?</p>
+          <a
+            href="#"
+            className="text-xs text-purple-600"
+            onClick={(e) => {
+              e.preventDefault();
+              handleRegister();
+            }}
+          >
+            Register
+          </a>
+        </div>
       </div>
     </div>
   );
