@@ -1,0 +1,6 @@
+-- AlterTable
+ALTER TABLE "Perfume" ADD COLUMN     "reviews_count" INTEGER NOT NULL DEFAULT 0,
+ADD COLUMN     "total_rating" DOUBLE PRECISION NOT NULL DEFAULT 0;
+
+-- AlterTable
+ALTER TABLE "reviews" ALTER COLUMN "total_rating" SET DATA TYPE DOUBLE PRECISION;

@@ -104,15 +104,14 @@ const Home = ({ onLogout, role }: HomeProps) => {
         showAddPerfume={showAddPerfume}
         perfumes={perfumes}
       />
-      {showHamburgerMenu && (
-        <SideBarFilter
-          setShowHamburgerMenu={setShowHamburgerMenu}
-          selectedBrands={selectedBrands}
-          setSelectedBrands={setSelectedBrands}
-          setFilter={setFilter}
-          setOffset={setOffset}
-        />
-      )}
+      <SideBarFilter
+        showHamburgerMenu={showHamburgerMenu}
+        setShowHamburgerMenu={setShowHamburgerMenu}
+        selectedBrands={selectedBrands}
+        setSelectedBrands={setSelectedBrands}
+        setFilter={setFilter}
+        setOffset={setOffset}
+      />
       {showAddPerfume && (
         <AddPerfumeDialog
           setShowAddPerfume={setShowAddPerfume}

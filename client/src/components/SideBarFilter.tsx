@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { MdDone } from "react-icons/md";
 
 interface SideBarFilterProps {
+  showHamburgerMenu: boolean;
   setShowHamburgerMenu: (value: boolean) => void;
   setSelectedBrands: (brands: string[]) => void;
   setFilter: (filter: string) => void;
@@ -12,6 +13,7 @@ interface SideBarFilterProps {
 }
 
 const SideBarFilter = ({
+  showHamburgerMenu,
   setShowHamburgerMenu,
   selectedBrands,
   setSelectedBrands,
@@ -54,6 +56,11 @@ const SideBarFilter = ({
     }
   };
 
+  const clearAllFilters = () => {
+    setSelectedBrands([]);
+    setOffset(0);
+  };
+
   useEffect(() => {
     if (selectedBrands.length > 0) {
       const brandList = selectedBrands.map((brand) => `${brand}`).join(", ");
@@ -64,27 +71,51 @@ const SideBarFilter = ({
   }, [selectedBrands, setFilter]);
 
   return (
-    <div className="fixed inset-0 z-50 flex bg-black/50">
-      <div className="fixed left-0 top-0 h-full w-[60%] bg-white p-4 z-50 overflow-y-auto">
+    <div
+      className={`fixed inset-0 z-50 flex bg-black/50 transition-opacity duration-200 ${showHamburgerMenu ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none"}`}
+    >
+      <div
+        className={`fixed left-0 top-0 h-full w-[60%] max-w-sm bg-white p-4 z-50 overflow-y-auto transition-transform duration-300 ease-out rounded rounded-r-2xl ${showHamburgerMenu ? "translate-x-0" : "-translate-x-full"}`}
+      >
         <MdDone
           size={20}
           className="cursor-pointer top-1 right-1 absolute"
           onClick={() => setShowHamburgerMenu(false)}
         />
-        <h2 className="text-lg font-bold ml-1!">Filter by Brand</h2>
-        <ul className="flex flex-col">
+        <h2 className="text-lg font-semibold ml-1!">Filter by Brand</h2>
+        <p className="text-gray-400 ml-1! text-sm">Select a brand</p>
+        <ul className="flex flex-col m-2!">
           {brands.map((brand, index) => (
             <li
               key={index}
-              className={`cursor-pointer hover:bg-gray-200 p-2! flex items-center justify-center ${index % 2 === 0 ? "bg-gray-100" : "bg-white"} ${selectedBrands.includes(brand) ? "text-pink-900 font-bold" : ""}`}
+              className={`cursor-pointer hover:bg-gray-200 p-2! flex items-center justify-between border border-gray-100 rounded-2xl m-0.5! ${selectedBrands.includes(brand) ? "bg-purple-50" : ""}`}
               onClick={() => {
                 handleCheckboxChange(brand);
               }}
             >
-              {brand}
+              {brand}{" "}
+              {selectedBrands.includes(brand) ? (
+                <MdDone
+                  size={16}
+                  className="ml-1 bg-primary text-white rounded-2xl p-0.5!"
+                />
+              ) : (
+                <MdDone
+                  size={16}
+                  className="ml-1 bg-white text-white rounded-2xl p-0.5! border border-gray-300"
+                />
+              )}
             </li>
           ))}
         </ul>
+        <button
+          className=" bg-linear-to-r from-primary to-purple-400 items-center rounded-2xl w-[85%] ml-4! mb-2! text-xs py-2! text-white"
+          onClick={() => {
+            clearAllFilters();
+          }}
+        >
+          Clear All
+        </button>
       </div>
       <div
         className="flex-1 cursor-pointer"

@@ -218,8 +218,8 @@ const PerfumeDetails = () => {
 
   return (
     <>
-      <div className="fixed inset-0 z-50 overflow-y-auto bg-white touch-scroll">
-        <div className="w-screen min-h-screen relative mx-1 pb-[calc(1.5rem+env(safe-area-inset-bottom))] pt-4">
+      <div className="fixed inset-0 z-50 overflow-y-auto bg-white touch-scroll ">
+        <div className="w-screen min-h-screen relative mx-1 pb-[calc(1.5rem+env(safe-area-inset-bottom))] p-4!">
           <IoMdArrowRoundBack
             size={28}
             className="cursor-pointer absolute top-2 left-2 text-gray-400 hover:text-gray-600 transition-colors z-10"

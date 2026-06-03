@@ -28,101 +28,80 @@ router.post("/", async (req, res) => {
 
 //fetch all perfumes with filter and search
 router.get("/", async (req, res) => {
-  const { filter, limit, offset } = req.query;
-  let { searchQuery } = req.query;
+  try {
+    const limitNum = Math.min(Number(req.query.limit) || 50);
+    const offsetNum = Number(req.query.offset) || 0;
 
-  searchQuery =
-    typeof req.query.searchQuery === "string"
-      ? req.query.searchQuery
-      : undefined;
+    const searchQuery =
+      typeof req.query.searchQuery === "string"
+        ? req.query.searchQuery.trim()
+        : undefined;
 
-  const brands =
-    typeof req.query.filter === "string"
-      ? req.query.filter.split(",").map((b) => b.trim())
-      : [];
+    const brands =
+      typeof req.query.filter === "string"
+        ? req.query.filter
+            .split(",")
+            .map((b) => b.trim())
+            .filter(Boolean)
+        : [];
 
-  //fetching perfumes with count
-  const [perfumes, perfumesCount, ratings] = await Promise.all([
-    prisma.perfume.findMany({
-      where: {
-        AND: [
-          searchQuery
-            ? {
-                OR: [
-                  { name: { contains: searchQuery, mode: "insensitive" } },
-                  { brand: { contains: searchQuery, mode: "insensitive" } },
-                ],
-              }
-            : {},
-          filter && brands.length > 0
-            ? {
-                brand: { in: brands },
-              }
-            : {},
+    const where = {
+      AND: [
+        searchQuery
+          ? {
+              OR: [
+                {
+                  name: {
+                    contains: searchQuery,
+                    mode: "insensitive" as const,
+                  },
+                },
+                {
+                  brand: {
+                    contains: searchQuery,
+                    mode: "insensitive" as const,
+                  },
+                },
+              ],
+            }
+          : {},
+        brands.length > 0
+          ? {
+              brand: {
+                in: brands,
+              },
+            }
+          : {},
+      ],
+    };
+
+    const [perfumes, perfumesCount] = await Promise.all([
+      prisma.perfume.findMany({
+        where,
+        orderBy: [
+          { total_rating: "desc" },
+          { reviews_count: "asc" },
+          { id: "asc" },
         ],
-      },
-      orderBy: {
-        reviews: {
-          _count: "asc",
-        },
-      },
+        skip: offsetNum,
+        take: limitNum,
+      }),
 
-      skip: Number(offset),
-      take: Number(limit),
-    }),
-    prisma.perfume.count({
-      where: {
-        AND: [
-          searchQuery
-            ? {
-                OR: [
-                  { name: { contains: searchQuery, mode: "insensitive" } },
-                  { brand: { contains: searchQuery, mode: "insensitive" } },
-                ],
-              }
-            : {},
-          filter && brands.length > 0
-            ? {
-                brand: { in: brands },
-              }
-            : {},
-        ],
-      },
-    }),
-    prisma.review.groupBy({
-      by: ["perfume_id"],
-      _avg: {
-        total_rating: true,
-      },
-    }),
-  ]);
+      prisma.perfume.count({
+        where,
+      }),
+    ]);
 
-  const ratingMap = new Map(
-    ratings.map((r) => [
-      r.perfume_id,
-      Math.round((r._avg.total_rating ?? 0) * 100) / 100,
-    ]),
-  );
-
-  //creating total rating of perfume and sorting by unrated first then by rating
-  const result = perfumes.map((p) => ({
-    ...p,
-    total_rating: ratingMap.get(p.id) ?? 0,
-  }));
-
-  result.sort((a, b) => {
-    // 1. unrated first
-    const aUnrated = a.total_rating === 0;
-    const bUnrated = b.total_rating === 0;
-
-    if (aUnrated && !bUnrated) return -1;
-    if (bUnrated && !aUnrated) return 1;
-
-    // 2. then by rating (highest first)
-    return b.total_rating - a.total_rating;
-  });
-
-  res.json({ perfumes: result, count: perfumesCount });
+    res.json({
+      perfumes,
+      count: perfumesCount,
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({
+      message: "Failed to fetch perfumes",
+    });
+  }
 });
 
 // fetch all unique brands
@@ -169,30 +148,59 @@ router.get("/:id", async (req, res) => {
 
 // create review
 router.post("/reviews", async (req, res) => {
-  const { perfume_id, scent, projection, longevity, comment } = req.body;
+  try {
+    const { perfume_id, scent, projection, longevity, comment } = req.body;
 
-  const average = (scent + projection + longevity) / 3;
+    const average = (scent + projection + longevity) / 3;
 
-  const result = await prisma.review.create({
-    data: {
-      user_id: req.userId!,
+    const result = await prisma.review.create({
+      data: {
+        user_id: req.userId!,
+        perfume_id,
+        scent,
+        projection,
+        longevity,
+        comment,
+        total_rating: totalRatingRound(average),
+      },
+    });
+
+    const stats = await prisma.review.aggregate({
+      where: {
+        perfume_id,
+      },
+      _avg: {
+        total_rating: true,
+      },
+      _count: {
+        id: true,
+      },
+    });
+
+    await prisma.perfume.update({
+      where: {
+        id: perfume_id,
+      },
+      data: {
+        total_rating: Number(stats._avg.total_rating ?? 0),
+        reviews_count: stats._count.id,
+      },
+    });
+
+    res.json({
       perfume_id,
       scent,
       projection,
       longevity,
       comment,
-      total_rating: totalRatingRound(average),
-    },
-  });
-
-  res.json({
-    perfume_id,
-    scent,
-    projection,
-    longevity,
-    comment,
-    total_rating: result.total_rating,
-  });
+      total_rating: result.total_rating,
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({
+      message: "Failed to create review",
+    });
+  }
 });
 
 //update review
