@@ -33,7 +33,12 @@ const Content = ({
           <img src="./logo.png" alt="logo" className="w-25" />
         </div>
       </div>
-      <div className="grid grid-cols-2 gap-3 m-1!">
+      <div
+        className="grid gap-2 mt-1! w-full pl-3! justify-items-center"
+        style={{
+          gridTemplateColumns: "repeat(auto-fit, minmax(180px, 1fr))",
+        }}
+      >
         {perfumes.map((perfume: Perfume) => (
           <PerfumeCard
             key={perfume.id}

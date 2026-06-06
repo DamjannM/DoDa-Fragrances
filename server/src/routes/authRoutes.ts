@@ -1,7 +1,6 @@
 import express from "express";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
-// import db from "../db";
 import dotenv from "dotenv";
 import prisma from "../prismaClient";
 
@@ -19,10 +18,6 @@ router.post("/register", async (req, res) => {
   }
 
   try {
-    // const insertUser = db.prepare(
-    //   `INSERT INTO users (email,password, role) VALUES (?, ?, ?)`,
-    // );
-    // const result = insertUser.run(email, hashedPassword, role);
     const user = await prisma.user.create({
       data: {
         email,
@@ -59,8 +54,6 @@ router.post("/login", async (req, res) => {
   const { email, password, rememberMe } = req.body;
 
   try {
-    // const getUser = db.prepare("SELECT * FROM users WHERE email = ?");
-    // const user = getUser.get(email);
     const user = await prisma.user.findUnique({
       where: { email },
     });

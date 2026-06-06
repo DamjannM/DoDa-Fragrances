@@ -22,9 +22,6 @@ const Login: React.FC<ChildProps> = ({
   const handleRegister = () => {
     setIsRegistered(false);
   };
-  // const handleLogin = () => {
-  //   setIsLogedIn(true);
-  // };
 
   const handleLogin = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -38,7 +35,7 @@ const Login: React.FC<ChildProps> = ({
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
-            email,
+            email: email.toLowerCase(),
             password,
             rememberMe,
           }),
