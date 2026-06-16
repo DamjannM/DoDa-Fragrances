@@ -78,11 +78,7 @@ router.get("/", async (req, res) => {
     const [perfumes, perfumesCount] = await Promise.all([
       prisma.perfume.findMany({
         where,
-        orderBy: [
-          { total_rating: "desc" },
-          { reviews_count: "asc" },
-          { id: "asc" },
-        ],
+        orderBy: [{ is_rated: "asc" }, { total_rating: "desc" }],
         skip: offsetNum,
         take: limitNum,
       }),
@@ -184,6 +180,7 @@ router.post("/reviews", async (req, res) => {
       data: {
         total_rating: Number(stats._avg.total_rating ?? 0),
         reviews_count: stats._count.id,
+        is_rated: true,
       },
     });
 
